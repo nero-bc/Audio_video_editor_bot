@@ -57,4 +57,7 @@ async def callback_query(client, callback_query):
     await callback_query.answer()
 
 if __name__ == "__main__":
-    app.run()
+    try:
+        app.run()
+    except Exception as e:
+        print(f"Exception occurred: {e}")

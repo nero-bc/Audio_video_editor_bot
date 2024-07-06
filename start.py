@@ -1,5 +1,6 @@
-import database
+from bot import main
+from database import create_table
 
-if __name__ == "__main__":
-    database.init_db()
-    print("Database initialized.")
+if __name__ == '__main__':
+    create_table()
+    main()

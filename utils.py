@@ -1,24 +1,44 @@
-import ffmpeg
-from tqdm import tqdm
-import time
+import os
+import subprocess
+from pyrogram import Client
+from config import API_ID, API_HASH, BOT_TOKEN
 
-def trim_video(file, start_time, end_time):
-    start_time_sec = convert_to_seconds(start_time)
-    end_time_sec = convert_to_seconds(end_time)
-    trimmed_file = "trimmed.mp4"
+app = Client("video_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-    input_stream = ffmpeg.input(file, ss=start_time_sec, to=end_time_sec)
-    ffmpeg.output(input_stream, trimmed_file).run()
-    
-    return trimmed_file
+async def download_file(file_id, output_path):
+    async with app:
+        file = await app.download_media(file_id, file_name=output_path)
+    return file
 
-def remove_audio(file):
-    video = ffmpeg.input(file)
-    video_no_audio_file = "no_audio.mp4"
+async def trim_video(file_id, start_time, duration, output_path):
+    input_path = await download_file(file_id, f"downloads/{file_id}.mp4")
+    command = [
+        'ffmpeg', '-i', input_path, '-ss', start_time, '-t', duration,
+        '-c', 'copy', output_path
+    ]
+    subprocess.run(command)
 
-    ffmpeg.output(video, video_no_audio_file, an=None).run()
-    return video_no_audio_file
+async def remove_audio(file_id, output_path):
+    input_path = await download_file(file_id, f"downloads/{file_id}.mp4")
+    command = [
+        'ffmpeg', '-i', input_path, '-an', output_path
+    ]
+    subprocess.run(command)
 
-def convert_to_seconds(time_str):
-    h, m, s = map(int, time_str.split(':'))
-    return h * 3600 + m * 60 + s
+async def trim_audio(file_id, start_time, duration, output_path):
+    input_path = await download_file(file_id, f"downloads/{file_id}.mp4")
+    command = [
+        'ffmpeg', '-i', input_path, '-ss', start_time, '-t', duration,
+        '-c', 'copy', output_path
+    ]
+    subprocess.run(command)
+
+async def merge_videos(video_list, output_path):
+    with open('videos.txt', 'w') as f:
+        for video in video_list:
+            f.write(f"file '{video}'\n")
+    command = [
+        'ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-c', 'copy', output_path
+    ]
+    subprocess.run(command)
+    os.remove('videos.txt')

@@ -21,7 +21,7 @@ async def handle_video(client, message):
 
 @app.on_message(filters.command("trim"))
 async def trim(client, message):
-    task_id, start_time, end_time = message.text.split()[1:]
+    task_id, start_time, end_time = message.text.split()[1:3]
     video_data = get_task(task_id)
     
     if video_data:

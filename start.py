@@ -1,4 +1,4 @@
-from bot import main
+from bot import bot
 from database import create_table
 
 if __name__ == '__main__':

@@ -1,25 +1,19 @@
 import sqlite3
 
-def init_db():
-    conn = sqlite3.connect('bot.db')
+def create_connection():
+    return sqlite3.connect('videos.db')
+
+def insert_video(file_id, file_path):
+    conn = create_connection()
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY, chat_id INTEGER, file TEXT)''')
+    c.execute("INSERT INTO videos (file_id, file_path) VALUES (?, ?)", (file_id, file_path))
     conn.commit()
     conn.close()
 
-def add_task(chat_id, file):
-    conn = sqlite3.connect('bot.db')
+def get_video_path(file_id):
+    conn = create_connection()
     c = conn.cursor()
-    c.execute("INSERT INTO tasks (chat_id, file) VALUES (?, ?)", (chat_id, file))
-    task_id = c.lastrowid
-    conn.commit()
+    c.execute("SELECT file_path FROM videos WHERE file_id=?", (file_id,))
+    result = c.fetchone()
     conn.close()
-    return task_id
-
-def get_task(task_id):
-    conn = sqlite3.connect('bot.db')
-    c = conn.cursor()
-    c.execute("SELECT file FROM tasks WHERE id=?", (task_id,))
-    file = c.fetchone()
-    conn.close()
-    return {'file': file[0]} if file else None
+    return result[0] if result else None

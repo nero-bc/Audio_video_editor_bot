@@ -23,16 +23,20 @@ conn.commit()
 async def start(client, message):
     await message.reply_text("Hello! I am a video processing bot. Send me a video file to get started.")
 
+# Example function to handle video messages
 @app.on_message(filters.video | filters.document)
 async def handle_video(client, message):
     video_file = message.video or message.document
 
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Trim Video", callback_data=f"trim_video:{video_file.file_id}")],
-        [InlineKeyboardButton("Remove Audio", callback_data=f"remove_audio:{video_file.file_id}")],
-        [InlineKeyboardButton("Trim Audio", callback_data=f"trim_audio:{video_file.file_id}")],
-        [InlineKeyboardButton("Merge Videos", callback_data=f"merge_videos:{video_file.file_id}")]
-    ])
+    # Create inline keyboard with concise callback data
+    keyboard = InlineKeyboardMarkup[[
+        [InlineKeyboardButton("Trim Video", callback_data=f"trim:{video_file.file_id}")],
+        [InlineKeyboardButton("Remove Audio", callback_data=f"remove:{video_file.file_id}")],
+        [InlineKeyboardButton("Merge Videos", callback_data=f"merge:{video_file.file_id}")]
+    ]]
+    
+    # Reply with the inline keyboard
+    await message.reply_text("Choose an action:", reply_markup=keyboard)
     
     await message.reply_text("Choose an action:", reply_markup=keyboard)
 

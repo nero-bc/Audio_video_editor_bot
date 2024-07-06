@@ -1,4 +1,3 @@
 pyrogram
 ffmpeg-python
 tqdm
-sqlite3

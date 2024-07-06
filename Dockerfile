@@ -1,11 +1,11 @@
 FROM python:3.9-slim
 
+RUN apt-get update && apt-get install -y ffmpeg sqlite3 libsqlite3-dev
+
 WORKDIR /app
 
-COPY . .
+COPY . /app
 
-RUN apt-get update && \
-    apt-get install -y ffmpeg && \
-    pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
-CMD ["python", "bot.py"]
+CMD ["python", "start.py"]

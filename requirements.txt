@@ -1,4 +1,4 @@
 pyrogram
 ffmpeg-python
 tqdm
-sqlite3==3.7.13
+sqlite3==3.8.6
